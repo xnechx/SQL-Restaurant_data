@@ -1,0 +1,35 @@
+--amount & revenue group by menu type
+select 
+  menu.menu_type category,
+  sum(ord.amount) amount,
+  sum(menu.price * ord.amount) 'revenue(฿)'
+from menu
+join orders ord
+  on ord.menu_id = menu.menu_id
+join invoices inv
+  on inv.invoice_id = ord.order_id
+group by 1
+order by 3 DESC;
+
+
+--the popular dish
+select 
+  menu.menu_name,
+  sum(amount)
+from menu
+join orders ord
+  on menu.menu_id = ord.menu_id
+where menu.menu_type = 'food'
+group by 1
+order by 2 DESC;
+
+
+--who spend more than avg(spend)
+select 
+  cus.name,
+  inv.total
+from 
+  customers cus,
+  invoices inv
+where cus.customer_id = inv.customer_id
+  and inv.total > (select avg(total) from invoices);
